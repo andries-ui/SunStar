@@ -1,0 +1,88 @@
+@import url('../../constance/constance.css');
+
+.verify{
+    width:100%;
+    height: 100vh;
+    background-color: var(--White-color);
+}
+
+.form-container{
+    left:30%;
+    position: relative;
+    width:350px;
+    height: 350px;  
+     box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+    -webkit-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+    -moz-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+}
+
+
+
+.formupdate{
+    position: relative;
+padding-left: 0px;
+}
+
+.formshowspan {
+    position: relative;
+    margin-top:3px;
+  font-size: var(--medium);
+  font-weight: 400;
+}
+
+.container{
+height: 150px;
+width: 150px;
+position: relative;
+}
+.item{
+    flex:3;
+    display: list-item;
+    background-color: transparent;
+    list-style: none;
+}
+.pininput{
+    height: 35px;
+    width: 150px;
+    border-top-width: 0px !important;
+    border-left-width: 0px !important;
+    border-right-width: 0px !important;
+    border-bottom-width: 2px !important;
+    border-color: var(--Black-color);
+}
+
+.hint{
+    flex:1;
+}
+
+.btnupdate{
+position: relative;
+bottom: 5px;
+right: 5px;
+border: none;
+padding: 10px;
+width: 150px;
+border-radius: 8px;
+font-weight: 600;
+align-self: stretch;
+font-size: var(--medium);
+background-color: var(--Blue-color);
+margin-top: 10px;
+}
+
+.indicator{
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    left:50%;
+    top:50%;
+
+}
+
+
+.error{
+   color:var(--Red-color);
+   font-size:var(--small);   
+   background-color: transparent;  
+   bottom: 5px;
+}

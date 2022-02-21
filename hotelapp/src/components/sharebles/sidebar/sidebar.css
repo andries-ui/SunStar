@@ -1,0 +1,54 @@
+@import url('../../constance//constance.css');
+
+.sidebar {
+    flex: 1;
+    height: 110vh ;
+    position: static;
+    border-right-width: 2px;
+    border-color: var(--black-color);
+background-color: var(--dark-background-color);
+}
+
+.sidebarwrapper{
+padding:5px;
+}
+
+.sidebarmenu{
+    margin-bottom: 10px;
+}
+
+.sidebartitle{
+    font-size:var(--x-small);
+    color:var(--dark-text-color);
+    margin-bottom: 20;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.sidebarlist{
+    list-style: none;
+    
+}
+
+.sidebarlistitem{
+    padding:5px;
+    cursor:pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    font-family: sans-serif;
+    color:var(--dark-text-color);
+    font-size:var(--x-small);
+    font-weight: 500;
+}
+.sidebarlistitem:active {
+    background-color: rgb(194, 191, 191);
+}
+.sidebarlistitem:hover {
+    background-color: rgb(218, 216, 216);
+    color:var(--light-text-color)
+}
+.sidebaricon{
+    margin-right:5px;
+    font-size: var(--small) !important;
+}
+

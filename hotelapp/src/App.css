@@ -1,0 +1,15 @@
+body{
+    padding: 0;
+}
+.sidebarcontainer{
+    display: flex;
+    height: 100vh;
+}
+
+.link{
+    text-decoration: none;
+    color:inherit
+}
+
+.route{
+    top: 60px}

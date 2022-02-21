@@ -1,0 +1,10 @@
+{
+  "expoServerNgrokUrl": "https://76-f78.andriessebola001.userapp.exp.direct",
+  "packagerNgrokUrl": "https://packager.76-f78.andriessebola001.userapp.exp.direct",
+  "ngrokPid": 6856,
+  "expoServerPort": 19001,
+  "packagerPort": 19001,
+  "packagerPid": null,
+  "webpackServerPort": null,
+  "devToolsPort": 19003
+}

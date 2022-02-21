@@ -1,0 +1,17 @@
+body{
+    padding: 0;
+    overflow-x: hidden; 
+    overflow-y: hidden;
+}
+.sidebarcontainer{
+    display: flex;
+    height: 100vh;
+}
+
+.link{
+    text-decoration: none;
+    color:inherit
+}
+
+.route{
+    top: 60px}

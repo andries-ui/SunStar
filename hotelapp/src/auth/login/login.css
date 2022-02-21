@@ -1,0 +1,109 @@
+@import url('../../components/constance/constance.css');
+
+.login {
+    width: 100%;
+    height: 94vh;
+    background-image: url('../../assets/images/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.fade {
+    background-color: var(--Black-color);
+    opacity: 0.6;
+    width: 100%;
+    height: 94vh;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    background-color: var(--White-color);
+    height: 500px;
+    width: 450px;
+    left: 40%;
+    align-self: center;
+    position: absolute;
+    bottom: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 30px 0px
+}
+
+/* .input {
+    width: 100%;
+    height: 50px;
+    margin-top: 10px;
+    padding: 5px 20px;
+} */
+
+.field {
+    width: 88%;
+    height: 30px;
+    position: relative;
+    border: none;
+    border-bottom: 1px var(--Black-color) solid !important;
+    border-radius: 2px;
+}
+
+.span-header {
+    position: relative;
+    font-size: var(--large);
+    color: var(--Black-color);
+    font-weight: bold;
+    padding: 30px 10px;
+    margin-top: 20px;
+
+}
+
+.span-text {
+    position: relative;
+    font-weight: 600;
+    color: var(--Black-color);
+
+}
+
+.span-reset {
+    width: 100%;
+    height:20px;
+    text-align: right;
+    font-weight: 600;
+    margin-top: 30px;
+}
+
+.btn-submit {
+    border: none;
+    padding: 8px;
+    font-size: var(--medium);
+    font-weight: 500;
+    color: var(--White-color);
+    background: var(--Blue-color);
+    width: 150px;
+    border-radius: 7px;
+}
+
+.btn-submit:hover {
+    font-size: var(--medium);
+    font-weight: 400;
+    background: var(--Grey-color);
+}
+
+.span-notice {
+    text-align: center;
+    font-weight: 600;
+    flex: 1;
+    padding: 20px;
+    color: var(--Red-color)
+}
+
+.indicator {
+    position: absolute;
+    right: 50%;
+}
+
+.error{
+    margin-left: 20px;
+}
+ 

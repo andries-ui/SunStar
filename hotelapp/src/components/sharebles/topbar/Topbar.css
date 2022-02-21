@@ -1,0 +1,75 @@
+
+@import url('../../constance/constance.css');
+
+.topbar {
+    width: 100%;
+    height: 50px;
+    top: 0;
+    position: sticky;
+    background-color: var(--dark-background-color);
+    border-bottom: var(--dark-border-color) 3px solid;
+}
+
+.topbarwrapper {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: var(--e-larger);
+    color: var(--White-color);
+    font-weight: bold;
+    margin-left: 10px;
+    box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+    -webkit-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+    -moz-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+}
+
+.topright {
+    display: flex;
+    align-items: center;
+
+}
+
+.topleft {
+    display: flex;
+    align-items: center;
+}
+
+.topiconcontainer {
+    position: relative;
+    margin-right: 10px;
+    display: flex;
+}
+
+.iconbedge {
+    width: 12px;
+    height: 12px;
+    top: -5;
+    position: absolute;
+    right: 2;
+    color: white;
+    background-color: var(--Red-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+
+}
+
+.avater {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.icon{
+    color:var(--White-color);
+}
+

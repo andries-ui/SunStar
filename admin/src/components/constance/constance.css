@@ -1,0 +1,45 @@
+:root{
+    /* //Font size */
+    --x-small: 14px;
+    --small: 16px;
+    --medium: 18px;
+    --semi-large: 20px;
+    --large: 22px;
+    --e-larger: 24px;
+    --x-larger: 26px;
+    --xx-larger: 28px;
+
+    /* //deviders */
+    --small-Divider: 2px;
+    --medium-Divider: 3px;
+    --large-Divider: 4px;
+
+    /* //Theme */
+    --Black-color: rgb(0, 0, 0);
+    --White-color: rgb(255, 255, 255);
+    --Blue-color: rgb(43, 172, 227);
+    --Green-color: rgb(110, 163, 25);
+    --Dark-Blue-color: rgb(16, 17, 35);
+    --Red-color: rgb(253, 23, 23);
+    --Gold-color: rgb(254, 205, 11);
+    --Gold-Dark-color: rgb(171, 137, 3);
+    --Grey-color: rgb(143, 143, 143);
+    --Grey-Lighter-color: rgb(138, 138, 138);
+
+    /* //dark */
+    --dark-background-color: rgb(47, 53, 65);
+    --dark-border-color: rgb(87, 92, 102);
+    --dark-backgroundAlt-color: rgb(87, 92, 102);
+    --dark-borderAlt-color: rgb(16, 17, 35);
+    --dark-text-color: rgb(236, 239, 244);
+    --dark-gold-color: rgb(254, 205, 11);
+
+
+    /* //light */
+    --light-background-color: hsl(0,0,93);
+    --light-border-color: hsl(0,0,74);
+    --light-backgroundAlt-color: hsl(240,2,92);
+    --light-borderAlt-color: hsl(0,0,74);
+    --light-text-color: hsl(0,0,9);
+    --light-gold-color: hsl(48,97,34);
+}

@@ -1,0 +1,59 @@
+@import url('../../constance/constance.css');
+
+.large {
+    flex:2;
+    box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+-webkit-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+-moz-box-shadow: 4px 6px 9px -4px rgba(0,0,0,0.59);
+padding: 5px;
+margin: 20px;
+}
+
+.title{
+    font-size: var(--medium);
+    font-weight: 600;
+}
+.table{
+    width: 100%;
+    border-spacing: 20%;
+    text-align:left
+}
+
+.lgtrUser{
+    display: flex;
+    align-items: center;
+    font-weight: 600; 
+    font-size: var(--medium);
+}
+
+.image{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit:cover;
+    margin-right: 10px;
+
+}
+
+.lgtdDate , .lgtdAmount {
+    font-weight: 400;
+    font-size: var(--medium);
+}
+
+.button{
+    align-items: center;
+    border:none;
+    padding: 5px !important;
+    cursor:pointer;
+    border-radius: 5px !important;
+}
+
+.button.Approved{
+    background-color: rgb(83, 204, 83);
+}
+.button.Pending{
+    background-color: rgb(167, 165, 163);
+}
+.button.Declined{
+    background-color: rgb(250, 41, 41);
+}
