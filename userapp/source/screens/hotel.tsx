@@ -57,7 +57,7 @@ const Hotel = ({ navigation }) => {
     }
 
     const GetRooms = () => {
-        axios.get(`https://sunstarapi.herokuapp.com/room/hotel/${params.key}`)
+        axios.get(`https://sunstarapi.herokuapp.com/room/rooms/${params.key}`)
             .then(async (hotel_res) => {
                 const roomdata: any = [];
                 hotel_res.data.forEach((room: any) => {

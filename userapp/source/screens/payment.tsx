@@ -38,15 +38,14 @@ const cardSchema = yup.object({
         .matches(/^(?![\s.]+$)[a-zA-Z\s.]*$/, "Only characters are allowed."),
     cardnumber: yup.string().required('Required').length(16).matches(/^(?:(?<visa>4[0-9]{12}(?:[0-9]{3})?)|(?<mastercard>5[1-5][0-9]{14})|(?<discover>6(?:011|5[0-9]{2})[0-9]{12})|(?<amex>3[47][0-9]{13})|(?<diners>3(?:0[0-5]|[68][0-9])[0-9]{11})|(?<jcb>(?:2131|1800|35[0-9]{3})[0-9]{11}))$/, "Invalid card number"),
     expdate: yup.string().required('Required').matches(/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/, "invalid date"),
-    cvv: yup.string().required('Required').length(3).matches(/[0-9]{3}/, "Invalid pin")
+    cvv: yup.string().required('Required').length(4).matches(/[0-9]{4}/, "Invalid pin")
 });
 
 const passwordSchema = yup.object({
     password: yup.string().required("Required").min(8).matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, "Invalid password"),
 })
 
-const CreditCard = ({ navigation }) => {
-    const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
+const Payment = ({ navigation }) => {
 
     const cards = [
         {
@@ -78,6 +77,7 @@ const CreditCard = ({ navigation }) => {
 
     const params = useRoute().params;
 
+    const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
     const payment = params.payment;
     const [modalComfirmVisible, setModalComfirmVisible] = useState(false);
     const [visiblepassword, setvisiblepassword] = useState(true);
@@ -93,7 +93,6 @@ const CreditCard = ({ navigation }) => {
     const [modalPasswordVisible, setModalPasswordVisible] = useState(false);
     const [names, setnames] = useState('');
     const [email, setemail] = useState('');
-    const [reserveId, setreserveId] = useState('');
 
     const [roomtype, setroomtype] = useState('');
     const [hotelname, sethotelname] = useState('');
@@ -150,6 +149,7 @@ const CreditCard = ({ navigation }) => {
                     :
                     `${roomtype} room has been reserved for your at the ${hotelname}\nPlease take note of the following booking details:\n\nCheckin Date: ${params.data.checkinDate}  \nCheckout Date: ${params.data.checkoutDate}\nroom number: ${roomNumber} \nfloor:          ${floor}\nReservation Amount R${params.data.amount} \n\nPlease do note that canceling a booking wil cost you a fee of 25% from you reservation fee and there will be no refund once the system initiates your checkin process.`;
 
+
                 let reserve = {
                     guestId: key,
                     hotelId: params.hotelKey,
@@ -168,10 +168,6 @@ const CreditCard = ({ navigation }) => {
                 console.log(reserve);
 
                 axios.post(`https://sunstarapi.herokuapp.com/roomReservation/`, reserve).then(async (reservationRes) => {
-
-                    console.log('====================================');
-                    setreserveId(reservationRes.data.id);
-                    console.log('====================================');
                     if (reservationRes.data.status === "Success") {
 
 
@@ -204,7 +200,9 @@ const CreditCard = ({ navigation }) => {
                                                 message: `${message} \n A comfirmation email will be sent to you shortly`,
                                                 pushData: { screen: "notivationscreen" }
                                             }).then((res) => {
-                                                paystackWebViewRef.current.startTransaction();
+
+
+                                                navigation.navigate('paidscreen', { data: params.data, room: roomtype, hotelname: hotelname });
                                                 setload(false);
                                             }).catch((err) => {
 
@@ -247,8 +245,8 @@ const CreditCard = ({ navigation }) => {
                                         pushData: { screen: "notivationscreen" }
                                     }).then((res) => {
 
-                                        paystackWebViewRef.current.startTransaction();
 
+                                        navigation.navigate('paidscreen', { data: params.data });
                                         setload(false);
                                     }).catch((err) => {
 
@@ -313,32 +311,6 @@ const CreditCard = ({ navigation }) => {
 
     }
 
-    const saveReceipt = async (values: any) => {
-
-
-        let key = await SecureStore.getItemAsync('key') || 'null';
-        let data = {
-            guestId: key,
-            reservationId: reserveId,
-            amount: params.data.amount,
-            paymentMethod: "credit card",
-            status: values.status,
-        }
-
-        axios.post('https://sunstarapi.herokuapp.com/payment/', data).then((results) => {
-
-        console.log('====================================');
-        console.log(results);
-        console.log('====================================');
-            navigation.navigate('paidscreen', { payment: params.payment, data: params.data, rideRequest: params.rideRequest, hotelKey: params.hotelKey, roomKey: params.roomKey })
-
-        }).catch((err) => {
-
-            console.log(err + '.');
-
-        });
-    }
-
     useEffect(() => {
 
         GetUserData();
@@ -350,80 +322,32 @@ const CreditCard = ({ navigation }) => {
             <ActionBar textStyle={{ color: theme.text, fontSize: Constance.large, fontWeight: 'bold' }} onBackPress={() => navigation.goBack()} backgroundColor={theme.background} text='Cards' iconBack={Platform.OS === 'ios' ? 'chevron-back' : 'arrow-back'} />
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={{ paddingBottom: 30 }}>
-                    <View style={{ paddingHorizontal: 40, height: 190, padding: 20, flexWrap: 'nowrap' }}>
-                        <PagerView
-                            initialPage={0}
-                            scrollEnabled
-                            pageMargin={10}
-                            style={{ paddingHorizontal: 20, height: 185, padding: 20, }}
-                            showPageIndicator={true}
-                            onPageSelected={(e: PagerViewOnPageSelectedEvent) => {
-                                setcurrent(e.nativeEvent.position);
-                            }}>
-                            {cards.map((card, index) =>
-                                <CreditCardComponent key={card.id} names={card.name} cardnumber={card.cardnumber} expdate={card.expdate} />
-                            )}
-                        </PagerView>
-                    </View>
+                <View style={{ height: 100, backgroundColor: Constance.Red, width: '100%' }}>
+                    <Paystack
+                        buttonText={"Make payment"}
+                        showPayButton={true}
+                        paystackKey="pk_test_fb493b6bf691093f30b0c0056b490fbf41e3d914"
+                        billingEmail="paystackwebview@something.com"
+                        amount={25000.00}
+                        billinMobile="0637838676"
+                        SafeAreaViewContainer={{ marginTop: 5 }}
+                        SafeAreaViewContainerModel={{ marginTop: 5 }}
+                        currency={"ZAR"}
+                        onCancel={(e) => {
+                            console.log(e);
 
-                    <View style={[{ marginTop: 40 }]}>
-                        <View style={[style.flexContainer, { width: '85%', alignSelf: 'center', backgroundColor: theme.backgroundAlt, alignItems: 'center', borderRadius: 12, height: 40, marginTop: 10 }]}>
-                            <Text style={[{ width: '40%', color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center' }]}>Name on card</Text>
-                            <Text style={[{ width: '50%', marginLeft: 10 }]}>{cards[current].name}</Text>
-                        </View>
-                        <View style={[style.flexContainer, { width: '85%', alignSelf: 'center', backgroundColor: theme.backgroundAlt, alignItems: 'center', borderRadius: 12, height: 40, marginTop: 10 }]}>
-                            <Text style={[{ width: '40%', color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>Cardnumber</Text>
-                            <Text style={[{ width: '50%', marginLeft: 10 }]}>{cards[current].cardnumber}</Text>
-                        </View>
+                        }}
+                        onSuccess={(res) => {
+                            console.log(res);
 
-                        <View style={[style.flexContainer, { alignItems: 'center', borderRadius: 12, height: 40, justifyContent: 'space-around', marginTop: 10 }]}>
-                            <View style={[style.flexContainer, { width: '47%', alignSelf: 'center', backgroundColor: theme.backgroundAlt, borderRadius: 12, height: 40, alignItems: 'center' }]}>
-                                <Text style={[{ color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>EXP date</Text>
-                                <Text style={[{ width: 110, marginLeft: 10 }]}>{cards[current].expdate}21</Text>
-                            </View>
-                            <View style={[style.flexContainer, { width: '30%', alignSelf: 'center', backgroundColor: theme.backgroundAlt, borderRadius: 12, height: 40, alignItems: 'center' }]}>
-                                <Text style={[{ color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>CVV</Text>
-                                <Text style={[{ width: 40, marginLeft: 10 }]}> **** </Text>
-                            </View>
-                        </View>
+                        }}
+                        ref={paystackWebViewRef}
+                    />
 
-                        <View style={[style.flexContainer, { alignItems: 'center', borderRadius: 12, height: 40, justifyContent: 'space-around', marginTop: 10, marginHorizontal: 15 }]}>
+                    <TouchableOpacity onPress={() => paystackWebViewRef.current.startTransaction()}>
+                        <Text>Pay Now</Text>
+                    </TouchableOpacity>
 
-                            <ButtonComponent press={() => { setmodalNewCard(true) }} lblstyle={{ color: theme.text }} mode={'text'} text={'New '} btnstyle={{ width: '40%', borderColor: Constance.Blue, borderWidth: 1, borderRadius: 7, height: 40, }} />
-
-                            <ButtonComponent press={() => { setmodalUpdateCard(true) }} lblstyle={{ color: theme.text }} mode={'text'} text={'Update'} btnstyle={{ backgroundColor: Constance.Blue, width: '40%', borderColor: theme.borderAlt, borderWidth: 1, borderRadius: 7, height: 40 }} />
-
-                        </View>
-                    </View>
-
-                    {payment ? <View >
-                        <Paystack
-                            buttonText={"Make payment"}
-                            showPayButton={true}
-                            paystackKey="pk_test_fb493b6bf691093f30b0c0056b490fbf41e3d914"
-                            billingEmail="techs2280@gmail.com"
-                            amount={params.data.amount}
-                            cardn
-                            billinMobile="0637838676"
-                            SafeAreaViewContainer={{ marginTop: 5 }}
-                            SafeAreaViewContainerModel={{ marginTop: 5 }}
-                            currency={"ZAR"}
-                            onCancel={(e) => {
-                                console.log(e);
-
-                            }}
-                            onSuccess={(res) => {
-                                saveReceipt(res)
-                            }}
-                            ref={paystackWebViewRef}
-                        />
-
-                        <TouchableOpacity style={{ height: 40, backgroundColor: Constance.Blue, marginHorizontal: 20, marginVertical: 15, borderRadius: 12 }} onPress={() => setModalComfirmVisible(true)}>
-                            <Text style={{ height: 40, top: 10, width: '100%', textAlign: 'center', fontSize: Constance.large, fontWeight: 'bold' }}>Pay balance</Text>
-                        </TouchableOpacity>
-
-                    </View> : null}
                 </View>
             </ScrollView>
 
@@ -648,4 +572,4 @@ const CreditCard = ({ navigation }) => {
     )
 }
 
-export default CreditCard
+export default Payment

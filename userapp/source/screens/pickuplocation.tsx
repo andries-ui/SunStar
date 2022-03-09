@@ -48,8 +48,7 @@ const PickupLocation = ({ navigation }) => {
     const [distance, setdistance] = useState('');
     const [duration, setduration] = useState('');
     const [travelingMode, settravelingMode] = useState("DRIVING")
-
-
+    const [ridecost, setridecost] = useState('');
     const starWarching = async () => {
         try {
             await requestForegroundPermissionsAsync();
@@ -92,6 +91,12 @@ const PickupLocation = ({ navigation }) => {
 
     }
 
+    const calculatePrice=(km:any,duration:any)=>{
+        let price = ((km * 1.90) % ((duration*4))) * 5;
+        
+        let bookingWithRide = price + params.data.amount;
+        setridecost(bookingWithRide);
+    }
 
     const GetAddress = async (latitude: any, longitude: any) => {
 
@@ -179,9 +184,9 @@ const PickupLocation = ({ navigation }) => {
                         }}
                         mode={travelingMode}
                         onReady={result => { 
-                            setdistance(`Distance: ${result.distance} km`);
-                            setduration(`Duration: ${result.duration} min.`);
-
+                            setdistance(` ${result.distance} km`);
+                            setduration(` ${result.duration} min.`);
+                            calculatePrice(result.distance, result.duration);
                         }}
                         onError={(errorMessage) => {
                             console.log(errorMessage);
@@ -224,8 +229,10 @@ const PickupLocation = ({ navigation }) => {
                         returnKeyType={'search'} // Can be left out for default return key 
                         onPress={(data, details ) => {
                             //setaddress(details.geometry.location)
-                            navigation.navigate('creditcardscreen', { payment: true, data: params.data, rideRequest: params.rideRequest, roomKey: params.roomKey, hotelKey: params.hotelKey, address: `` })
+                            GetAddress(details.geometry.location.lat, details.geometry.location.lng)
+                            setcoordinates([{ latitude: latitude, longitude: longitude }, { latitude: details.geometry.location.lat, longitude: details.geometry.location.lng }])
                             console.log(details.geometry.location);
+                            setmodalUpdateCard(false);
 
                         }}// 'details' is provided when fetchDetails = true
                         getDefaultValue={() => ''}
@@ -329,14 +336,28 @@ const PickupLocation = ({ navigation }) => {
   
                     <View style={{ height: 200 }}>
 
-                        <Text style={modal.textStyle}>{address}</Text>
+                    <Text style={[modal.textStyle,{fontSize:Constance.large,fontWeight:'bold'  }]}>Traveling Details</Text>
+                    
+                    <Text style={[modal.textStyle,{fontSize:Constance.medium, fontWeight:'bold' }]}>Address:</Text>
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium,fontWeight:'900'  }]}>{address}</Text>
                         
-                        <Text style={modal.textStyle}>{distance}</Text>
-                        <Text style={modal.textStyle}>{duration}</Text>
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium, fontWeight:'bold' }]}>Distance:</Text>
+                        <View style={{ justifyContent: 'space-between', flexDirection:'row'}}>    
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium, fontWeight:'900' }]}>Distance: {distance}</Text>
+                        <Icon type="ionicon" name="car" color={Constance.Blue} size={24}/>
+                        </View>
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium, fontWeight:'bold' }]}>Duration:</Text>
+                        
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium,fontWeight:'900'  }]}> {duration} </Text>
+                    
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium,fontWeight:'bold'  }]}>Price </Text>
+                        <Text style={[modal.textStyle,{fontSize:Constance.medium,fontWeight:'900' }]}>R {ridecost? ridecost.toString().substring(0, ridecost.toString().indexOf('.')+ 2):null}</Text>
 
                     </View>
 
-                    <ButtonComponent press={() => { navigation.navigate('creditcardscreen', { payment: true, data: params.data, rideRequest: params.rideRequest, roomKey: params.roomKey, hotelKey: params.hotelKey, address: address }) }} lblstyle={{ color: theme.text }} mode={''} text={'Comfirm address'} btnstyle={{ width: '100%', marginTop: 10, backgroundColor: Constance.Blue, borderColor: theme.borderAlt, borderWidth: 1, borderRadius: 7, height: 40, alignItems: 'center' }} />
+
+                    <ButtonComponent press={() => { navigation.navigate('creditcardscreen', { payment: true, data: { checkinDate: params.data.checkinDate, checkoutDate: params.data.checkinDate, adults: params.data.checkinDate, children: params.data.checkinDate, amount: parseInt(ridecost) }
+                    , rideRequest: params.rideRequest, roomKey: params.roomKey, hotelKey: params.hotelKey, address: address }) }} lblstyle={{ color: theme.text }} mode={''} text={'Comfirm address'} btnstyle={{ width: '100%', marginTop: 10, backgroundColor: Constance.Blue, borderColor: theme.borderAlt, borderWidth: 1, borderRadius: 7, height: 40, alignItems: 'center' }} />
 
                 </View>
             </Modal>

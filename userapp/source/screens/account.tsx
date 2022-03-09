@@ -80,10 +80,9 @@ const Account = ({ navigation }) => {
     }
 
     const signOut = async () => {
-        navigation.navigate('loginscreen');
         await SecureStore.deleteItemAsync('token');
         await SecureStore.deleteItemAsync('key');
-
+        navigation.navigate('loginscreen');
     }
 
     const HandleAlert=()=>{
@@ -254,6 +253,9 @@ const Account = ({ navigation }) => {
         });
 
     }
+
+    
+    
 
     useEffect(() => {
         GetUserData();

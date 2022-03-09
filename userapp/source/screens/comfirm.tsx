@@ -12,19 +12,17 @@ import * as yup from 'yup';
 import * as Animatable from 'react-native-animatable';
 import Anim from '../components/anim';
 import axios from 'axios';
-import { useRoute } from '@react-navigation/native';
 import Progress from '../components/indicator';
 
 
 const loginSchema = yup.object({
-  password: yup.string().required("Required").min(8).matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, "Invalid password"),
-  cpassword: yup.string().required("Required").min(8).matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, "Invalid password"),
+  email: yup.string().required().email(),
+  username: yup.string().required("Required").min(3).matches(/^[a-zA-Z0-9]+$/, "Invalid username"),
 })
 
 
-const ResetPassword = ({ navigation }) => {
+const ComfirmAccount = ({ navigation }) => {
 
-  const props = useRoute().params;
   const [email, setemail] = useState('');
   const [password, setpassword] = useState('');
   const [visible, setVisible] = useState(true);
@@ -35,39 +33,26 @@ const ResetPassword = ({ navigation }) => {
 
   const [invalid, setinvalid] = useState(false);
 
-
-  const UpdatePassword = async (values: any) => {
-
+  const handleComfirmUser = (values: any) => {
     setload(true);
-    axios.patch(`https://sunstarapi.herokuapp.com/user/${props.key}`, values).then((res) => {
-
-        const results = res.data;
-
-        console.log('====================================');
-        console.log(values, props.key, results);
-        console.log('====================================');
-        if (results.status == 'Success') {
-            setinvalid(true);
-            setmessage(results.message);
-            setload(false);
-            navigation.navigate('loginscreen'); 
-        } else {
-            setmessage(results.message);
-            setinvalid(true);
-            setload(false);
-        }
-
-    }).catch((err) => {
-
+    
+    axios.post("https://sunstarapi.herokuapp.com/login/verify/account", values).then(res=>{
+        
+        setmessage(res.data.message)
         setinvalid(true);
-        setmessage(err);
         setload(false);
-
-    });
-
-}
-
-
+        navigation.navigate('verifyscreen', {
+          email: values.email,
+          password: values.password,
+          key: res.data.key,
+          task:'reset'
+        });
+    }).catch(err=>{
+      console.log(err);
+      setmessage("Process failed, please try again.")
+    setinvalid(true);
+    })
+  }
 
   return (
     <View style={{ height: '100%', width: '100%' }}>
@@ -85,46 +70,37 @@ const ResetPassword = ({ navigation }) => {
           <TextComponent style={{ fontSize: Constance.medium, marginVertical: 15 }} text='Reset password' />
 
           <Formik
-            initialValues={{ password: '', cpassword: '' }}
+            initialValues={{ email: '', username: '' }}
             onSubmit={(values, action) => {
-
-              if (values.password === values.cpassword) {
-                UpdatePassword(values)
-                }
-              else {
-                setmessage("Password does not match");
-                setinvalid(true);
-              }
-
-              
+              handleComfirmUser(values)
             }}
             validationSchema={loginSchema}
           >
 
             {(props) => (
               <View>
-                <InputComponent hint='Password'
+                <InputComponent hint='E-mail'
                   left={<TextInput.Icon name="at" />}
-                  changeText={props.handleChange("password")}
-                  value={props.values.password}
+                  changeText={props.handleChange("email")}
+                  value={props.values.email}
                   style={{
                     borderColor: Constance.light_border,
                     borderWidth: 1, borderRadius: 5
                   }}
                 />
 
-                {props.errors.password || null ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.password} /></Animatable.View> : null}
-                <InputComponent hint='Comfirm Password'
+                {props.errors.email || null ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.email} /></Animatable.View> : null}
+                <InputComponent hint='username'
                   left={<TextInput.Icon name="account-box" />}
-                  changeText={props.handleChange("cpassword")}
-                  value={props.values.cpassword}
+                  changeText={props.handleChange("username")}
+                  value={props.values.username}
                   style={{
                     borderColor: Constance.light_border,
                     borderRadius: 5,
                     borderWidth: 1, top: 5
                   }}
                 />
-                {props.errors.cpassword ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.cpassword} /></Animatable.View> : null}
+                {props.errors.username ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.username} /></Animatable.View> : null}
 
 
                 <ButtonComponent mode='contained' btnstyle={{ backgroundColor: Constance.Yellow, marginTop: 30 }} lblstyle={{ color: Constance.White, textTransform: 'capitalize' }} text='Reset Password' press={props.handleSubmit} />
@@ -139,7 +115,13 @@ const ResetPassword = ({ navigation }) => {
         <Snackbar
           visible={invalid}
           onDismiss={() => setinvalid(false)}
-        >
+
+          action={{
+            label: 'Undo',
+            onPress: () => {
+              // Do something
+            },
+          }}>
           {message}
         </Snackbar>
 
@@ -152,4 +134,4 @@ const ResetPassword = ({ navigation }) => {
   )
 }
 
-export default ResetPassword
+export default ComfirmAccount

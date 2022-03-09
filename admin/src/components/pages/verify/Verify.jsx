@@ -20,6 +20,7 @@ const Verify =( props ) => {
             alert(res.data.message);
             setload(false);
             console.log(res.data.message);
+            console.log(res.data.details);
             
         }).catch((err) => {
             alert( err);

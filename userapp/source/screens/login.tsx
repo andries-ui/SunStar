@@ -129,7 +129,7 @@ const Login = ({ navigation }) => {
                   {props.errors.password ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.password} /></Animatable.View> : null}
 
                   <TextComponent
-                    style={{ textAlign: 'right', marginVertical: 5, height: 30, marginTop: 10 }} text='Forgot Password?' press={() => navigation.navigate('resetscreen')} />
+                    style={{ textAlign: 'right', marginVertical: 5, height: 30, marginTop: 10 , fontWeight:'bold'}} text='Forgot Password?' press={() => navigation.navigate('comfirmscreen')} />
 
 
                   <ButtonComponent mode='contained' btnstyle={{ backgroundColor: Constance.Yellow, marginTop: 0 }} lblstyle={{ color: Constance.White, textTransform: 'capitalize' }} text='Sign-in' press={props.handleSubmit} />

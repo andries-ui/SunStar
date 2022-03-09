@@ -54,7 +54,8 @@ const Register = ({ navigation }) => {
             navigation.navigate('verifyscreen', {
               email: values.email,
               password: values.password,
-              key: res.data.key
+              key: res.data.key,
+              task:'registration'
             });
        
           }else{
@@ -146,6 +147,7 @@ const Register = ({ navigation }) => {
                     <InputComponent hint='Contact'
                       left={<TextInput.Icon name="phone" />}
                       changeText={props.handleChange("contact")}
+                      keyboard={"phone-pad"}
                       value={props.values.contact}
                       style={{
                         borderColor: Constance.light_border,

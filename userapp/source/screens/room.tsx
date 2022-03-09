@@ -37,7 +37,8 @@ const Room = ({ navigation }) => {
     const [latitude, setlatitude] = useState<number>(0);
     const [longitude, setlongitude] = useState<number>(0);
     const [coordinates, setcoordinates] = useState<any>([]);
-    const [mapview, setmapview] = useState<any>()
+    const [mapview, setmapview] = useState<any>();
+    const [floor, setfloor] = useState('');
 
     const { width, height } = Dimensions.get('window');
 
@@ -66,20 +67,19 @@ const Room = ({ navigation }) => {
             let room = room_res.data;
             setprice(room.price);
             sethotelKey(room.hotelId);
+            setfloor(room.floor)
+            console.log(room.hotelId, "=====>>>>>>");
 
-            axios.get(`https://sunstarapi.herokuapp.com/hotel/${room.hotelId}`).then(async(hotel_res) => {
+            axios.get(`https://sunstarapi.herokuapp.com/hotel/${room.hotelId}`).then(async (hotel_res) => {
                 let room = hotel_res.data;
                 sethotelname(room.name);
 
+            }).catch((err) => {
+                console.log(err, ">>>>>>>>>")
             })
-                .catch((err) => {
-                    console.log(err);
-                })
-
+        }).catch((err) => {
+            console.log(err);
         })
-            .catch((err) => {
-                console.log(err);
-            })
     }
 
     // const LOCATION_TASK_NAME = 'background-location-task';
@@ -100,7 +100,6 @@ const Room = ({ navigation }) => {
     const starWarching = async () => {
         try {
             await requestForegroundPermissionsAsync();
-
         } catch (err: any) {
             seterr(err)
         }
@@ -225,12 +224,12 @@ const Room = ({ navigation }) => {
                             </View>
                             <TextComponent text={'views'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: 'bold' }} />
                         </View>
-                        <TouchableOpacity onPress={() => { navigation.navigate('hotelscreen',{key: hotelKey}) }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('hotelscreen', { key: hotelKey }) }}>
                             <TextComponent text={hotelname} style={{ fontSize: Constance.large, color: theme.text, fontWeight: 'bold' }} />
                         </TouchableOpacity>
 
-                        <FlatList pagingEnabled  ItemSeparatorComponent={Separator} horizontal data={images} renderItem={({ item, index }) => (
-                            <ImageComponent  key={index} image={{ uri: item }} text={item.name} />
+                        <FlatList pagingEnabled ItemSeparatorComponent={Separator} horizontal data={images} renderItem={({ item, index }) => (
+                            <ImageComponent key={index} image={{ uri: item }} text={item.name} />
                         )} />
 
 
@@ -238,10 +237,10 @@ const Room = ({ navigation }) => {
                             <View style={[{ width: '50%', paddingHorizontal: 2 }]}>
                                 <TextComponent text={'Room setting'} style={{ fontSize: Constance.semi_large, color: theme.text, fontWeight: 'bold' }} />
                                 <Divider style={[{ height: Constance.smallDivider, marginHorizontal: 2, backgroundColor: theme.background }]} />
-                                <TextComponent text={numOfBeds} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                <TextComponent text={bedtype} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                <TextComponent text={'='} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                <TextComponent text={'=='} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                <TextComponent text={`${numOfBeds} beds`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                <TextComponent text={`${bedtype} bed`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                <TextComponent text={`Level ${floor}`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                <TextComponent text={'Internal bathroom'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
 
                             </View>
                             <View style={[{ width: '50%', paddingHorizontal: 2, }]}>

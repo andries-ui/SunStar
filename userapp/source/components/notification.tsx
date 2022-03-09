@@ -72,7 +72,7 @@ const NotificationComponent = (props: props) => {
     }, [])
 
     return (
-        <View style={{ backgroundColor:status? Constance.Red: Constance.Blue, height: dropped ? null : 95, paddingHorizontal: 5, paddingVertical: 5, paddingBottom: 10, marginHorizontal: 0, borderRadius: 1 }}>
+        <View style={{ backgroundColor: theme.backgroundAlt, height: dropped ? null : 95, paddingHorizontal: 5, paddingVertical: 5, paddingBottom: 10, marginHorizontal: 0, borderRadius: 1 }}>
 
             <TouchableOpacity onPress={press}>
                 <View>

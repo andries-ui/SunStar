@@ -20,6 +20,7 @@ import DropdownMenu from 'react-native-dropdown-menu';
 import OnBoarding from './onboardin';
 import style from './../styles/screens/profile';
 import DropDown from "react-native-paper-dropdown";
+import * as SecureStore from 'expo-secure-store';
 
 
 const Booking = ({ navigation }) => {
@@ -54,13 +55,14 @@ const Booking = ({ navigation }) => {
     const [month, setmonth] = useState<any>();
     const [day, setday] = useState<any>();
     const [amountDue, setamountDue] = useState<any>();
-
+    const [bookedDates, setbookedDates] = useState([]);
     const [showDropDown, setShowDropDown] = useState(false);
     const [adult, setadult] = useState<string>("");
     const [showMultiSelectDropDown, setShowMultiSelectDropDown] = useState(false);
     const [invalid, setinvalid] = useState(false);
     const [children, setchildren] = useState<string>("");
     const [message, setmessage] = useState('');
+    const [floor, setfloor] = useState('');
     const adults = [
         {
             label: "1 Adult",
@@ -106,8 +108,11 @@ const Booking = ({ navigation }) => {
 
         var one_day = 1000 * 60 * 60 * 24;
         let days = Math.round(enddate - startdate) / (one_day);
-        setamountDue((parseInt(price) * days).toString())
         console.log(days);
+        
+        let calculatedPrice = days > 1 ? (parseInt(price) * days).toString() : price
+        setamountDue(parseInt(calculatedPrice))
+        console.log(days, calculatedPrice);
     }
 
 
@@ -115,11 +120,18 @@ const Booking = ({ navigation }) => {
         //function to handle the date change
         if (type === 'END_DATE') {
             setSelectedEndDate(date);
-            
+
             let new_date: any = new Date();
             handlePriceCalculation(selectedStartDate, date);
 
         } else {
+            let today = new Date();
+
+            if (today > new Date(date)) {
+                setinvalid(true);
+                setmessage("The date you have selected has expired");
+                return;
+            }
             setSelectedEndDate(null);
             setSelectedStartDate(date);
             setamountDue(price);
@@ -141,12 +153,12 @@ const Booking = ({ navigation }) => {
         if (selectedStartDate == null || selectedEndDate == null) {
             setmessage("Please select you checkin and checkout date.")
             setinvalid(true);
-            
+
             return;
         }
         setModalComfirmVisible(true);
         setDatePickerVisibility(true);
-        
+
         console.log(selectedStartDate);
         console.log(selectedEndDate);
     }
@@ -172,7 +184,7 @@ const Booking = ({ navigation }) => {
             setprice(room.price);
             setamountDue(room.price);
             sethotelKey(room.hotelId);
-
+            setfloor(room.floor)
             axios.get(`https://sunstarapi.herokuapp.com/hotel/${room.hotelId}`).then((hotel_res) => {
                 let room = hotel_res.data;
                 sethotelname(room.name);
@@ -209,8 +221,36 @@ const Booking = ({ navigation }) => {
         }
     };
 
-    useEffect(() => {
+    const GetReservations = async () => {
 
+        axios.get(`https://sunstarapi.herokuapp.com/roomReservation/reservation/${params.key}`).then((notifications) => {
+
+            const bookings: any = [];
+
+            notifications.data.forEach((reserve: any) => {
+
+                if (reserve.active == true) {
+                    let date1: any = new Date(reserve.checkoutDate);
+                    let date2: any = new Date(reserve.checkinDate);
+
+                    for (let dt = new Date(reserve.checkinDate); dt <= new Date(reserve.checkoutDate); dt.setDate(dt.getDate() + 1)) {
+                        bookings.push(new Date(dt));
+                    }
+
+                                       
+                }
+            })
+            console.log(bookings, bookings.length);
+            
+            setbookedDates(bookings);
+        }).catch((err) => {
+            console.log(err);
+        });
+
+    }
+
+    useEffect(() => {
+        GetReservations();
         GetRoom();
         GetProperty();
         HandleDates();
@@ -238,10 +278,10 @@ const Booking = ({ navigation }) => {
                                 <View style={[{ width: '50%', paddingHorizontal: 2, shadowColor: "#000", }]}>
                                     <TextComponent text={'Room setting'} style={{ fontSize: Constance.semi_large, color: theme.text, fontWeight: 'bold' }} />
                                     <Divider style={[{ height: Constance.smallDivider, marginHorizontal: 2, backgroundColor: theme.background }]} />
-                                    <TextComponent text={numOfBeds} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                    <TextComponent text={bedtype} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                    <TextComponent text={'internal bathroom'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
-                                    <TextComponent text={'King bed type'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                    <TextComponent text={`${numOfBeds} beds`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                    <TextComponent text={`${bedtype} bed`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                    <TextComponent text={`Level ${floor}`} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
+                                    <TextComponent text={'Intrnal bathroom'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '600' }} />
 
                                 </View>
                                 <View style={[{ width: '50%', paddingHorizontal: 2 }]}>
@@ -293,8 +333,9 @@ const Booking = ({ navigation }) => {
                                         style={{
                                             borderWidth: 1, borderColor: theme.border
                                         }}
-
+                                        value={selectedStartDate}
                                         startFromMonday={true}
+                                        allowBackwardRangeSelect={false}
                                         allowRangeSelection={true}
                                         minDate={new Date(year, 1, month)}
                                         maxDate={new Date(2070, 6, 3)}
@@ -323,9 +364,12 @@ const Booking = ({ navigation }) => {
                                             'December',
                                         ]}
                                         previousTitle="Previous"
+                                        previousTitleStyle={{ fontWeight: 'bold' }}
                                         nextTitle="Next"
+                                        nextTitleStyle={{ fontWeight: 'bold' }}
                                         todayBackgroundColor={Constance.GreyLight}
-                                        selectedDayColor={Constance.White}
+                                        disabledDates={bookedDates}
+                                        selectedDayColor={Constance.Green}
                                         selectedDayTextColor="#000000"
                                         scaleFactor={375}
                                         textStyle={{
@@ -338,13 +382,13 @@ const Booking = ({ navigation }) => {
                                         Checkin Date :
                                     </Text>
                                     <Text style={styles.dateStyle}>
-                                        {selectedStartDate ? selectedStartDate.toString() : 'Not Picked'}
+                                        {selectedStartDate ? selectedStartDate.toString().substring(0,16) : 'Not Picked'}
                                     </Text>
                                     <Text style={[styles.textStyle, { color: theme.text }]}>
                                         Checkout Date :
                                     </Text>
                                     <Text style={styles.dateStyle}>
-                                        {selectedEndDate ? selectedEndDate.toString() : 'Not Picked'}
+                                        {selectedEndDate ? selectedEndDate.toString().substring(0,16) : 'Not Picked'}
                                     </Text>
                                 </View>
                             </View>
@@ -396,7 +440,7 @@ const Booking = ({ navigation }) => {
 
 
                 <Snackbar
-                style={{backgroundColor:Constance.Red}}
+                    style={{ backgroundColor: Constance.Red }}
                     visible={invalid}
                     onDismiss={() => setinvalid(false)}>
                     {message}

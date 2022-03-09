@@ -21,6 +21,8 @@ import Hotel from "../screens/hotel";
 import Paid from "../screens/successfullypaid";
 import Verify from './../screens/verify';
 import App from './../../App';
+import Payment from "../screens/payment";
+import ComfirmAccount from "../screens/comfirm";
 
 const Stack = createNativeStackNavigator();
 
@@ -84,6 +86,9 @@ const Route = ({ navigation }) => {
           <Stack.Screen name={"hotelscreen"} component={Hotel} />
           <Stack.Screen name={"paidscreen"} component={Paid} />
           <Stack.Screen name={"appscreen"} component={App} />
+          <Stack.Screen name={"verifyscreen"} component={Verify} />
+          <Stack.Screen name={"payscreen"} component={Payment} />
+          <Stack.Screen name={"comfirmscreen"} component={ComfirmAccount} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -114,6 +119,8 @@ const Route = ({ navigation }) => {
             <Stack.Screen name={"paidscreen"} component={Paid} />
             <Stack.Screen name={"verifyscreen"} component={Verify} />
             <Stack.Screen name={"appscreen"} component={App} />
+            <Stack.Screen name={"payscreen"} component={Payment} />
+            <Stack.Screen name={"comfirmscreen"} component={ComfirmAccount} />
 
           </Stack.Navigator>
         </NavigationContainer>
@@ -143,6 +150,8 @@ const Route = ({ navigation }) => {
             <Stack.Screen name={"paidscreen"} component={Paid} />
             <Stack.Screen name={"appscreen"} component={App} />
             <Stack.Screen name={"verifyscreen"} component={Verify} />
+            <Stack.Screen name={"payscreen"} component={Payment} />
+            <Stack.Screen name={"comfirmscreen"} component={ComfirmAccount} />
 
           </Stack.Navigator>
         </NavigationContainer>

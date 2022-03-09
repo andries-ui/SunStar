@@ -222,6 +222,7 @@ const Profile = ({ navigation }) => {
                                     key={data.item.roomId} />
                             )}
                             bounces
+                            
                             bouncesZoom
                             disableRightSwipe
                             ItemSeparatorComponent={Separator}

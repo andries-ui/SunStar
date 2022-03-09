@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { View } from 'react-native'
+import { ImageBackground, View } from 'react-native'
 import { Image, Text } from 'react-native-elements'
 import style from '../styles/components/creditcard'
 import Constance from '../theme/const'
@@ -18,24 +18,24 @@ const CreditCardComponent = (props: props) => {
     const { key, names, cardnumber, expdate, press } = props;
 
     return (
-        <View style={style.parent}>
 
-            <View style={style.card}>
-                    <Text style={[style.names, { color: Constance.White }]}>{names}</Text>
-                    <Text style={[style.cardnumber, { color: Constance.White, marginTop: 10 }]}>{cardnumber}</Text>
+            <Image style={style.parent} source={require('../../assets/images/card.png')} resizeMode='center'>
+                <View  style={[style.details]}>
+                <Text style={[style.cardnumber, { color: Constance.White, marginTop: 10, left:60 }]}>{cardnumber}</Text>
 
-                    <View style={style.container}>
+                <Text style={[style.names, { color: Constance.White ,top:10}]}>{names}</Text>
+                
+                <View style={style.container}>
 
-                        <View style={style.image}>
-                            <Image resizeMode='center' style={style.image} source={require('../../assets/images/visa.png')} />
-                        </View>
-                        <Text style={[style.master, { color: Constance.White }]}>master card</Text>
+                    <View style={style.image}>
+                        <Image resizeMode='center' style={style.image} source={require('../../assets/images/visa.png')} />
                     </View>
-
-
-                    <Text style={[style.expdate, { color: Constance.White }]}>EXP <Text style={[style.date, { color: Constance.White }]}>{expdate}</Text></Text>
+                    <Text style={[style.master, { color: Constance.White }]}>master card</Text>
                 </View>
-        </View>
+
+                <Text style={[style.expdate, { color: Constance.White }]}>EXP <Text style={[style.date, { color: Constance.White }]}>{expdate}</Text></Text>
+                </View>
+            </Image >
     )
 }
 

@@ -52,6 +52,7 @@ export default function Reset() {
         
       } else {
         alert(res.data.message);
+        console.log(res.data.details);
       }
 
     }).catch((err) => {
@@ -99,7 +100,7 @@ if(values.password == values.comfirmPassword){
       }
 
     }).catch((err) => {
-      alert(err);
+      alert(err+".");
       console.log(err);
       setload(false);
     })

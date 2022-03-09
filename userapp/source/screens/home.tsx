@@ -19,6 +19,10 @@ import PopularItemComponent from "../components/popular";
 import axios from "axios";
 import * as Location from 'expo-location';
 import * as SecureStore from 'expo-secure-store';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder'
+import LinearGradient from 'expo-linear-gradient';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const Tab = createBottomTabNavigator();
 
@@ -59,21 +63,20 @@ const HomeScreen = ({ navigation }) => {
 
             const roomdata: any = [];
             res.data.forEach((room: any) => {
-                
+
                 axios.get(`https://sunstarapi.herokuapp.com/roomRating/ratings/${room._id}`).then((rating_res) => {
 
-                    let total:any =rating_res.data.length * 5;
-                    let ratings :any= 0.0;
-                    for(let item in rating_res.data){
-                        ratings = ratings + parseInt(rating_res.data[item].ratedStar.toString());
-                       // console.log(ratings, "===>>>>>>");
+                    let total: any = rating_res.data.length * 5;
+                    let ratings: any = 5.0;
+                    for (let item in rating_res.data) {
+                        ratings = ratings + parseInt(rating_res.data[item].ratedStar.toString()).substring(0, 3);
+                        // console.log(ratings, "===>>>>>>");
                     }
-                    
-                    let totalRates:any=0;
-                    if(total){
-                     totalRates = ratings / total* 5;
-                     console.log(totalRates);
-                     
+
+                    let totalRates: any = 5.0;
+                    if (total) {
+                        totalRates = ratings / total * 5;
+
                     }
                     axios.get(`https://sunstarapi.herokuapp.com/property/${room._id}`).then((property_res) => {
 
@@ -102,119 +105,121 @@ const HomeScreen = ({ navigation }) => {
                         console.log(err);
                     })
 
+                }).catch((err) => {
+                    console.log(err);
+                })
+            })
+
+
         }).catch((err) => {
             console.log(err);
+
         })
-    })
-
-
-}).catch ((err) => {
-    console.log(err);
-
-})
     }
 
-const starWarching = async () => {
-    try {
-        await requestForegroundPermissionsAsync();
+    const starWarching = async () => {
+        try {
+            await requestForegroundPermissionsAsync();
 
-    } catch (err: any) {
-        seterr(err)
+        } catch (err: any) {
+            seterr(err)
+        }
     }
-}
 
-const updateState = async () => {
+    const updateState = async () => {
 
-    try {
+        try {
 
-        const { status } = await Location.requestForegroundPermissionsAsync();
+            const { status } = await Location.requestForegroundPermissionsAsync();
 
-        if (status !== 'granted') { return; }
+            if (status !== 'granted') { return; }
 
-        let location = await Location.getCurrentPositionAsync({});
+            let location = await Location.getCurrentPositionAsync({});
 
-        setlatitude(location.coords.latitude);
-        setlongitude(location.coords.longitude);
+            setlatitude(location.coords.latitude);
+            setlongitude(location.coords.longitude);
 
-        let rigion = await Location.reverseGeocodeAsync({
-            longitude,
-            latitude
-        });
+            let rigion = await Location.reverseGeocodeAsync({
+                longitude,
+                latitude
+            });
 
-        setaddress(rigion[0].isoCountryCode + ", " + rigion[0].region + ", " + rigion[0].city + ", " + rigion[0].street + ", " + rigion[0].postalCode)
-        setregion(rigion[0]);
-        console.log(rigion[0]);
+            setaddress(rigion[0].isoCountryCode + ", " + rigion[0].region + ", " + rigion[0].city + ", " + rigion[0].street + ", " + rigion[0].postalCode)
+            setregion(rigion[0]);
+            //console.log(rigion[0]);
 
 
-    } catch (err) {
+        } catch (err) {
+
+        }
+
 
     }
 
 
-}
+
+    useEffect(() => {
+
+        starWarching();
+        updateState();
+        getToken();
+        GetHotels();
+    }, [])
 
 
+    return (
 
-useEffect(() => {
+        <View style={{ backgroundColor: theme.background, height: '100%', width: '100%' }}>
 
-    starWarching();
-    updateState();
-    getToken();
-    GetHotels();
-}, [])
+            <View style={{ marginVertical: 20, paddingHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
 
-
-return (
-
-    <View style={{ backgroundColor: theme.background, height: '100%', width: '100%' }}>
-
-        <View style={{ marginVertical: 20, paddingHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
-
-            <View style={{ width: '85%', borderRadius: 15, backgroundColor: theme.background }}>
-                <TouchableOpacity onPress={() => navigation.navigate('searchscreen')}>
-                    <InputComponent editable={false} left={<TextInput.Icon name="magnify" />} hint="Find accomodation" style={{ width: '95%', backgroundColor: theme.border }} />
-                </TouchableOpacity>
+                <View style={{ width: '85%', borderRadius: 15, backgroundColor: theme.background }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('searchscreen')}>
+                        <InputComponent editable={false} left={<TextInput.Icon name="magnify" />} hint="Find accomodation" style={{ width: '95%', backgroundColor: theme.border }} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ backgroundColor: theme.borderAlt, height: 40, width: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 12 }}>
+                    <Icon type='Ionicon' name='notifications' color={theme.text} onPress={() => navigation.navigate('notivationscreen', { indiNotif: true })} />
+                </View>
             </View>
-            <View style={{ backgroundColor: theme.borderAlt, height: 40, width: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 12 }}>
-                <Icon type='Ionicon' name='notifications' color={theme.text} onPress={() => navigation.navigate('notivationscreen', { indiNotif: true })} />
-            </View>
+
+
+            <ScrollView showsVerticalScrollIndicator={false} >
+                <View style={{ paddingBottom: 80 }}>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, }}>
+                        <TextComponent text={'Nearest accomodations'} style={{ fontSize: Constance.medium, color: theme.text, fontWeight: 'bold' }} />
+                        <TextComponent text={'See all'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '900' }} />
+                    </View>
+
+                    <View>
+                        <FlatList pagingEnabled showsHorizontalScrollIndicator={false} ItemSeparatorComponent={Separator} horizontal data={hotels} renderItem={({ item, index }) => (
+
+                            <NearestItemComponent image={{ uri: item.images }} address={item.location}
+                                name={item.type} price={item.price} ratings={item.rates}
+                                key={item.roomId} press={() => { navigation.navigate('roomscreen', { key: item.key }); }} />
+
+                        )} />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, marginTop: 5 }}>
+                        <TextComponent text={'Popular'} style={{ fontSize: Constance.medium, color: theme.text, fontWeight: 'bold' }} />
+                        <TextComponent text={''} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '900' }} />
+                    </View>
+                    <View>
+                        <FlatList ItemSeparatorComponent={Separator} data={hotels} renderItem={({ item, index }) => (
+                            <PopularItemComponent image={{ uri: item.images }} address={region ? region.city : "PLK"}
+                                name={item.type} price={item.price} ratings={item.rates}
+                                key={item.roomId} press={() => { navigation.navigate('roomscreen', { key: item.key, address: address }); }} />
+                        )} />
+                    </View>
+                </View>
+            </ScrollView>
+
+
         </View>
 
-
-        <ScrollView showsVerticalScrollIndicator={false} >
-            <View style={{ paddingBottom: 80 }}>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, }}>
-                    <TextComponent text={'Nearest accomodations'} style={{ fontSize: Constance.medium, color: theme.text, fontWeight: 'bold' }} />
-                    <TextComponent text={'See all'} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '900' }} />
-                </View>
-
-                <View>
-                    <FlatList pagingEnabled showsHorizontalScrollIndicator={false} ItemSeparatorComponent={Separator} horizontal data={hotels} renderItem={({ item, index }) => (
-                        <NearestItemComponent image={{ uri: item.images }} address={item.location}
-                            name={item.type} price={item.price} ratings={item.rates}
-                            key={item.roomId} press={() => { navigation.navigate('roomscreen', { key: item.key }); }} />
-                    )} />
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, marginTop: 5 }}>
-                    <TextComponent text={'Popular'} style={{ fontSize: Constance.medium, color: theme.text, fontWeight: 'bold' }} />
-                    <TextComponent text={''} style={{ fontSize: Constance.small, color: theme.text, fontWeight: '900' }} />
-                </View>
-                <View>
-                    <FlatList ItemSeparatorComponent={Separator} data={hotels} renderItem={({ item, index }) => (
-                        <PopularItemComponent image={{ uri: item.images }} address={region ? region.city : "PLK"}
-                            name={item.type} price={item.price} ratings={item.rates }
-                            key={item.roomId} press={() => { navigation.navigate('roomscreen', { key: item.key, address: address }); }} />
-                    )} />
-                </View>
-            </View>
-        </ScrollView>
-
-
-    </View>
-
-)
+    )
 }
 
 export default HomeScreen;

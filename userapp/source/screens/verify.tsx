@@ -15,18 +15,19 @@ import Anim from '../components/anim';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
+import { BACKEND } from '@env';
 
 
 const loginSchema = yup.object({
   pin: yup.string().required("Required").min(3).matches(/[0-9]{5,6}/, "Invalid pin")
- 
+
 })
 
 
 const Verify = ({ navigation }) => {
 
-const props = useRoute();
-console.log(props.params);
+  const props = useRoute();
+  console.log(props.params);
 
   const [visible, setVisible] = useState(true);
   const [confirmVisible, setconfirmVisible] = useState(true)
@@ -40,19 +41,21 @@ console.log(props.params);
   }
 
 
-  const handleSuccessfulRegistration =  ()=>{
-    
-    const data = { email: props.params.email,
+  const handleSuccessfulRegistration = () => {
+
+    const data = {
+      email: props.params.email,
       password: props.params.password,
-      type: 'client'}
-    
+      type: 'client'
+    }
+
     setload(true);
     const url = `https://sunstarapi.herokuapp.com/login/`
-    axios.post(url, data).then( async (res) => {
+    axios.post(url, data).then(async (res) => {
       const results = res.data;
       if (results.status == 'Success') {
         setload(false);
-        await SecureStore. setItemAsync('token', results.token);
+        await SecureStore.setItemAsync('token', results.token);
         await SecureStore.setItemAsync('key', results.key);
         navigation.navigate('dashboardscreen', { key: results.key });
         setload(false);
@@ -75,27 +78,33 @@ console.log(props.params);
 
   const handleRegistration = (values: any) => {
 
-    console.log(values);
-    
+    console.log(values, BACKEND);
+
     setload(true);
     const url = `https://sunstarapi.herokuapp.com/user/verify/${props.params.key}`;
     try {
       axios.post(url, values)
         .then((res) => {
 
-          if(res.data.status === "Success"){
-           
-            handleSuccessfulRegistration()
+          if (res.data.status === "Success") {
 
-          }else{
-          setmessage(res.data.message + ".");
-          console.log(res.data.details);
-          setinvalid(true);
-          setload(false);}
+            if (props.params.task == "registration") {
+              handleSuccessfulRegistration()
+            } else {
+              navigation.navigate('resetscreen', {
+                key: props.params.key,
+              });
+            }
+          } else {
+            setmessage(res.data.message + ".");
+            console.log(res.data.details, "++>>++>>");
+            setinvalid(true);
+            setload(false);
+          }
         })
         .catch((err) => {
-          setmessage(err + ".");
-          console.log(err);
+          setmessage(err + ".==>>");
+          console.log(err, "===>>>>>");
           setinvalid(true);
           setload(false);
         })
@@ -126,13 +135,13 @@ console.log(props.params);
               <TextComponent style={{ fontSize: Constance.medium, marginVertical: 15 }} text='Register' />
 
               <Formik
-                initialValues={{ pin: ''}}
+                initialValues={{ pin: '' }}
                 onSubmit={(values, action) => {
-                 let data = {
-                      pin: values.pin
-                    };
-                    handleRegistration(data);
-                  
+                  let data = {
+                    pin: values.pin
+                  };
+                  handleRegistration(data);
+
                 }}
                 validationSchema={loginSchema}
               >
@@ -143,6 +152,7 @@ console.log(props.params);
                       left={<TextInput.Icon name="account" />}
                       changeText={props.handleChange("pin")}
                       value={props.values.pin}
+                      keyboard={"number-pad"}
                       style={{
                         borderColor: Constance.light_border,
                         borderWidth: 1, borderRadius: 5
@@ -150,14 +160,12 @@ console.log(props.params);
                     />
                     {props.errors.pin || null ? <Animatable.View animation="pulse" easing="ease-out"><TextComponent style={{ color: Constance.Red }} text={props.errors.pin} /></Animatable.View> : null}
 
-                   
-                    <ButtonComponent mode='contained' btnstyle={{ marginTop: 40, backgroundColor: Constance.Yellow, }} lblstyle={{ color: Constance.White, textTransform: 'capitalize' }} text='Register' press={props.handleSubmit} />
+
+                    <ButtonComponent mode='contained' btnstyle={{ marginTop: 40, backgroundColor: Constance.Yellow, }} lblstyle={{ color: Constance.White, textTransform: 'capitalize' }} text='Verify' press={props.handleSubmit} />
 
                   </View>
                 )}
               </Formik>
-
-              <ButtonComponent mode='text' btnstyle={{ marginTop: 20, alignSelf: 'center' }} lblstyle={{ color: Constance.Black, textTransform: 'capitalize' }} text='Sign-in' press={() => { navigation.navigate('loginscreen') }} />
 
             </View>
           </ScrollView>
