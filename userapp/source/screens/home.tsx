@@ -156,8 +156,6 @@ const HomeScreen = ({ navigation }) => {
 
     }
 
-
-
     useEffect(() => {
 
         starWarching();

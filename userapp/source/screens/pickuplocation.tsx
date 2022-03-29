@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, StatusBar, TouchableOpacity, View } from "react-native";
 import { ThemeContext } from "../theme/themeProvider";
-import MapView, { DirectionsRenderer, Marker, MarkerAnimated, PROVIDER_GOOGLE } from 'react-native-maps'; 3
+import MapView, { DirectionsRenderer, Marker, MarkerAnimated, PROVIDER_GOOGLE } from 'react-native-maps'; 
 import { Divider, Icon, Text } from "react-native-elements";
 import Constance from "../theme/const";
 import ImageComponent from "../components/image";
@@ -49,6 +49,7 @@ const PickupLocation = ({ navigation }) => {
     const [duration, setduration] = useState('');
     const [travelingMode, settravelingMode] = useState("DRIVING")
     const [ridecost, setridecost] = useState('');
+    const [ammountDue, setammountDue] = useState('');
     const starWarching = async () => {
         try {
             await requestForegroundPermissionsAsync();
@@ -95,7 +96,8 @@ const PickupLocation = ({ navigation }) => {
         let price = ((km * 1.90) % ((duration*4))) * 5;
         
         let bookingWithRide = price + params.data.amount;
-        setridecost(bookingWithRide);
+        setridecost(price);
+        setammountDue(bookingWithRide);
     }
 
     const GetAddress = async (latitude: any, longitude: any) => {
@@ -356,7 +358,7 @@ const PickupLocation = ({ navigation }) => {
                     </View>
 
 
-                    <ButtonComponent press={() => { navigation.navigate('creditcardscreen', { payment: true, data: { checkinDate: params.data.checkinDate, checkoutDate: params.data.checkinDate, adults: params.data.checkinDate, children: params.data.checkinDate, amount: parseInt(ridecost) }
+                    <ButtonComponent press={() => { navigation.navigate('creditcardscreen', { payment: true,address:address, duration:duration, distance:distance, data: { checkinDate: params.data.checkinDate, checkoutDate: params.data.checkinDate, adults: params.data.checkinDate, children: params.data.checkinDate, amount: parseInt(ammountDue) , ridecost: ridecost}
                     , rideRequest: params.rideRequest, roomKey: params.roomKey, hotelKey: params.hotelKey, address: address }) }} lblstyle={{ color: theme.text }} mode={''} text={'Comfirm address'} btnstyle={{ width: '100%', marginTop: 10, backgroundColor: Constance.Blue, borderColor: theme.borderAlt, borderWidth: 1, borderRadius: 7, height: 40, alignItems: 'center' }} />
 
                 </View>

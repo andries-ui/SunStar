@@ -79,11 +79,15 @@ const Cam = (props: props) => {
       allowsEditing: true,
       aspect: [4, 3],
     });
-    setIsPreview(true);
-    setimageUrl(result.uri );
-    convertBase64(result);
-    console.log('====================================');
-    setIsPreview(true);
+
+    if(!result.cancelled){
+      setIsPreview(true);
+      setimageUrl(`file://${result.uri}`);
+      convertBase64(result);
+      console.log('====================================');
+      setIsPreview(true);
+    }
+   
   }
 
   const onSnap = async () => {
@@ -112,7 +116,6 @@ const Cam = (props: props) => {
         fileReader.onload = () => {
             resolve(fileReader.result);
             console.log(fileReader.result);
-            
         };
         fileReader.onerror = (error) => {
             reject(error);

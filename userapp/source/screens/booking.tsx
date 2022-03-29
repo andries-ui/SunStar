@@ -84,7 +84,7 @@ const Booking = ({ navigation }) => {
     const kids = [
         {
             label: "No child",
-            value: "No child",
+            value: "0 child",
         },
         {
             label: "1 child",
@@ -119,9 +119,11 @@ const Booking = ({ navigation }) => {
     const onDateChange = (date: any, type: any) => {
         //function to handle the date change
         if (type === 'END_DATE') {
-            setSelectedEndDate(date);
+            selectedStartDate ?
+            setSelectedEndDate(date): setSelectedEndDate(null);
 
             let new_date: any = new Date();
+
             handlePriceCalculation(selectedStartDate, date);
 
         } else {
@@ -129,7 +131,8 @@ const Booking = ({ navigation }) => {
 
             if (today > new Date(date)) {
                 setinvalid(true);
-                setmessage("The date you have selected has expired");
+                setSelectedStartDate(null);
+                setmessage("The date you have selected has expired.");
                 return;
             }
             setSelectedEndDate(null);
@@ -335,6 +338,7 @@ const Booking = ({ navigation }) => {
                                         }}
                                         value={selectedStartDate}
                                         startFromMonday={true}
+                                        
                                         allowBackwardRangeSelect={false}
                                         allowRangeSelection={true}
                                         minDate={new Date(year, 1, month)}
@@ -376,6 +380,7 @@ const Booking = ({ navigation }) => {
                                             color: theme.text,
                                         }}
                                         onDateChange={onDateChange}
+
                                     /> : null}
                                 <View style={styles.textStyle}>
                                     <Text style={[styles.textStyle, { color: theme.text }]}>

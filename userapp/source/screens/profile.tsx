@@ -23,8 +23,8 @@ const Profile = ({ navigation }) => {
     const { theme, dark, toggle } = useContext(ThemeContext);
     const [token, settoken] = useState('');
     const [key, setkey] = useState('');
-    const [names, setnames] = useState('--');
-    const [email, setemail] = useState('==');
+    const [names, setnames] = useState('');
+    const [email, setemail] = useState('');
     const [res, setres] = useState([]);
     const [image, setimage] = useState('');
     const [places, setplaces] = useState([]);
@@ -45,9 +45,9 @@ const Profile = ({ navigation }) => {
             setnames(data.names);
             setemail(data.email);
 
-            let buff = Buffer.from(data.url.data, 'base64');
-            setimage(buff.toString('base64'))
-            console.log(data.details);
+            // let buff = Buffer.from(data.url.data, 'base64');
+            // setimage(buff.toString('base64'))
+            // console.log(data.details);
         }).catch((err) => {
 
             console.log(err + '.');
@@ -222,7 +222,6 @@ const Profile = ({ navigation }) => {
                                     key={data.item.roomId} />
                             )}
                             bounces
-                            
                             bouncesZoom
                             disableRightSwipe
                             ItemSeparatorComponent={Separator}

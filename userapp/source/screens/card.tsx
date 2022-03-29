@@ -26,8 +26,8 @@ import { useRoute } from "@react-navigation/native";
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
 import Progress from '../components/indicator';
+import * as SecureStore from 'expo-secure-store';
 import { Paystack, paystackProps } from 'react-native-paystack-webview';
 
 Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: false, shouldSetBadge: false, }) });
@@ -204,8 +204,22 @@ const CreditCard = ({ navigation }) => {
                                                 message: `${message} \n A comfirmation email will be sent to you shortly`,
                                                 pushData: { screen: "notivationscreen" }
                                             }).then((res) => {
-                                                paystackWebViewRef.current.startTransaction();
-                                                setload(false);
+                                                
+                                                axios.post(`https://app.nativenotify.com/api/indie/notification`, {
+                                                    subID: "drivertoken{accgccac-1234567}",
+                                                    appId: 910,
+                                                    appToken: 'IBzo5MJJB46vcD3JGfjwRf',
+                                                    title: title,
+                                                    message: `${names} requested a ride on ${params.data.checkinDate} to ${hotelname} hotel. \n Pickup address: ${params.address} \n Duration: ${params.duration} \n Distance: ${params.distance} \n price: ${params.ridecost}`,
+                                                    pushData: { screen: "notivationscreen" }
+                                                }).then((res) => {
+                                                    paystackWebViewRef.current.startTransaction();
+                                                    setload(false);
+                                                }).catch((err) => {
+                                                    setload(false);
+                                                    console.log(err + "===");
+
+                                                })
                                             }).catch((err) => {
 
                                                 setload(false);
@@ -327,9 +341,9 @@ const CreditCard = ({ navigation }) => {
 
         axios.post('https://sunstarapi.herokuapp.com/payment/', data).then((results) => {
 
-        console.log('====================================');
-        console.log(results);
-        console.log('====================================');
+            console.log('====================================');
+            console.log(results);
+            console.log('====================================');
             navigation.navigate('paidscreen', { payment: params.payment, data: params.data, rideRequest: params.rideRequest, hotelKey: params.hotelKey, roomKey: params.roomKey })
 
         }).catch((err) => {
@@ -384,7 +398,7 @@ const CreditCard = ({ navigation }) => {
                             </View>
                             <View style={[style.flexContainer, { width: '30%', alignSelf: 'center', backgroundColor: theme.backgroundAlt, borderRadius: 12, height: 40, alignItems: 'center' }]}>
                                 <Text style={[{ color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>CVV</Text>
-                                <Text style={[{ width: 40, marginLeft: 10 }]}> **** </Text>
+                                <Text style={[{ width: 40, marginLeft: 10 }]}> *** </Text>
                             </View>
                         </View>
 
@@ -402,9 +416,9 @@ const CreditCard = ({ navigation }) => {
                             buttonText={"Make payment"}
                             showPayButton={true}
                             paystackKey="pk_test_fb493b6bf691093f30b0c0056b490fbf41e3d914"
-                            billingEmail="techs2280@gmail.com"
+                            billingEmail={email}
                             amount={params.data.amount}
-                            cardn
+
                             billinMobile="0637838676"
                             SafeAreaViewContainer={{ marginTop: 5 }}
                             SafeAreaViewContainerModel={{ marginTop: 5 }}
@@ -534,7 +548,7 @@ const CreditCard = ({ navigation }) => {
                                             <Text style={[{ color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>CVV</Text>
 
                                             <View style={{ height: 40, left: 5, width: '58%' }}>
-                                                <InputComponent hint='1234' changeText={props.handleChange("cvv")}
+                                                <InputComponent hint='123' changeText={props.handleChange("cvv")}
                                                     value={props.values.cvv} style={{ height: 40, left: 5, width: '100%', backgroundColor: theme.backgroundAlt, borderRadius: 12 }} />
 
                                             </View>
@@ -618,7 +632,7 @@ const CreditCard = ({ navigation }) => {
                                             <Text style={[{ color: theme.text, backgroundColor: theme.borderAlt, borderRadius: 10, height: 35, textAlign: 'center', textAlignVertical: 'center', padding: 5 }]}>CVV</Text>
 
                                             <View style={{ height: 40, left: 5, width: '58%' }}>
-                                                <InputComponent hint='1234' changeText={props.handleChange("cvv")}
+                                                <InputComponent hint='123' changeText={props.handleChange("cvv")}
                                                     value={props.values.cvv} style={{ height: 40, left: 5, width: '100%', backgroundColor: theme.backgroundAlt, borderRadius: 12 }} />
 
                                             </View>
